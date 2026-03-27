@@ -1,18 +1,17 @@
-// kiro-graph-data.js — v3: three rings of nodes with parent refs
+// kiro-graph-data.js — v4: four rings of nodes
 import {
   CENTER_POS, FIRST_RING_RADIUS,
   SECOND_RING_MIN, SECOND_RING_MAX,
   THIRD_RING_MIN, THIRD_RING_MAX,
+  FOURTH_RING_MIN, FOURTH_RING_MAX,
 } from './kiro-constants.js'
 
 const deg = (d) => (d * Math.PI) / 180
 const polar = (cx, cy, r, angle) => ({ x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) })
 
-// seeded PRNG
 let seed = 42
 function rand() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646 }
 
-// first-degree: asymmetric triangle
 const FIRST_ANGLES = [deg(210), deg(350), deg(115)]
 const firstPos = FIRST_ANGLES.map((a) => polar(CENTER_POS.x, CENTER_POS.y, FIRST_RING_RADIUS, a))
 
@@ -31,25 +30,17 @@ const aPos = fanPositions(firstPos[0], deg(210), 6, 26, SECOND_RING_MIN, SECOND_
 const bPos = fanPositions(firstPos[1], deg(350), 7, 22, SECOND_RING_MIN, SECOND_RING_MAX)
 const cPos = fanPositions(firstPos[2], deg(115), 5, 28, SECOND_RING_MIN, SECOND_RING_MAX)
 
-// third-degree: select second-degree nodes to bloom from
-// from f1's cluster: a0, a2, a4, a5 bloom (4 nodes, 3 each = 12)
-// from f2's cluster: b0, b2, b3, b5, b6 bloom (5 nodes, 3 each = 15)
-// from f3's cluster: c0, c2, c4 bloom (3 nodes, 3-4 each = 10)
-// total third: ~37
-
+// third-degree
 const thirdDefs = [
-  // from a-cluster
   { parent: 'a0', parentPos: aPos[0], baseAngle: deg(200), count: 3 },
   { parent: 'a2', parentPos: aPos[2], baseAngle: deg(240), count: 3 },
   { parent: 'a4', parentPos: aPos[4], baseAngle: deg(190), count: 3 },
   { parent: 'a5', parentPos: aPos[5], baseAngle: deg(220), count: 3 },
-  // from b-cluster
   { parent: 'b0', parentPos: bPos[0], baseAngle: deg(340), count: 3 },
   { parent: 'b2', parentPos: bPos[2], baseAngle: deg(10), count: 3 },
   { parent: 'b3', parentPos: bPos[3], baseAngle: deg(350), count: 3 },
   { parent: 'b5', parentPos: bPos[5], baseAngle: deg(320), count: 3 },
   { parent: 'b6', parentPos: bPos[6], baseAngle: deg(0), count: 3 },
-  // from c-cluster
   { parent: 'c0', parentPos: cPos[0], baseAngle: deg(120), count: 4 },
   { parent: 'c2', parentPos: cPos[2], baseAngle: deg(140), count: 3 },
   { parent: 'c4', parentPos: cPos[4], baseAngle: deg(100), count: 3 },
@@ -58,6 +49,7 @@ const thirdDefs = [
 const thirdNodes = []
 const thirdLinks = []
 let thirdIdx = 0
+const thirdPositions = {} // store for fourth-ring parents
 for (const def of thirdDefs) {
   const positions = fanPositions(def.parentPos, def.baseAngle, def.count, 35, THIRD_RING_MIN, THIRD_RING_MAX)
   for (let i = 0; i < def.count; i++) {
@@ -65,7 +57,40 @@ for (const def of thirdDefs) {
     const parentGroup = def.parent.startsWith('a') ? 1 : def.parent.startsWith('b') ? 2 : 3
     thirdNodes.push({ id, type: 'third', group: parentGroup, parent: def.parent, ix: positions[i].x, iy: positions[i].y })
     thirdLinks.push({ source: def.parent, target: id, phase: 'third-bloom' })
+    thirdPositions[id] = positions[i]
     thirdIdx++
+  }
+}
+
+// fourth-degree — bloom from ~10 third-degree nodes, 2-3 each = ~25 nodes
+const fourthDefs = [
+  { parent: 't0', baseAngle: deg(190), count: 2 },
+  { parent: 't3', baseAngle: deg(250), count: 3 },
+  { parent: 't6', baseAngle: deg(210), count: 2 },
+  { parent: 't9', baseAngle: deg(230), count: 2 },
+  { parent: 't12', baseAngle: deg(330), count: 3 },
+  { parent: 't15', baseAngle: deg(10), count: 2 },
+  { parent: 't18', baseAngle: deg(350), count: 3 },
+  { parent: 't21', baseAngle: deg(310), count: 2 },
+  { parent: 't24', baseAngle: deg(0), count: 2 },
+  { parent: 't27', baseAngle: deg(130), count: 3 },
+  { parent: 't30', baseAngle: deg(150), count: 2 },
+  { parent: 't33', baseAngle: deg(90), count: 2 },
+]
+
+const fourthNodes = []
+const fourthLinks = []
+let fourthIdx = 0
+for (const def of fourthDefs) {
+  const pp = thirdPositions[def.parent]
+  if (!pp) continue
+  const positions = fanPositions(pp, def.baseAngle, def.count, 40, FOURTH_RING_MIN, FOURTH_RING_MAX)
+  const parentNode = thirdNodes.find((n) => n.id === def.parent)
+  for (let i = 0; i < def.count; i++) {
+    const id = `q${fourthIdx}`
+    fourthNodes.push({ id, type: 'fourth', group: parentNode?.group || 0, parent: def.parent, ix: positions[i].x, iy: positions[i].y })
+    fourthLinks.push({ source: def.parent, target: id, phase: 'fourth-bloom' })
+    fourthIdx++
   }
 }
 
@@ -78,6 +103,7 @@ export const nodes = [
   ...bPos.map((p, i) => ({ id: `b${i}`, type: 'second', group: 2, parent: 'f2', ix: p.x, iy: p.y })),
   ...cPos.map((p, i) => ({ id: `c${i}`, type: 'second', group: 3, parent: 'f3', ix: p.x, iy: p.y })),
   ...thirdNodes,
+  ...fourthNodes,
 ]
 
 export const links = [
@@ -90,12 +116,13 @@ export const links = [
   { source: 'a3', target: 'b1', phase: 'full-bloom' },
   { source: 'b5', target: 'c0', phase: 'full-bloom' },
   ...thirdLinks,
+  ...fourthLinks,
 ]
 
-// export counts for callouts
 export const COUNTS = {
-  firstBloom: 7,  // 1 friend + 6 in their group
-  preDropTotal: 1 + 3 + 18, // you + first + second
-  finalTotal: 1 + 3 + 18 + thirdNodes.length,
-  thirdCount: thirdNodes.length,
+  f1Friends: 6,
+  f2Friends: 7,
+  f3Friends: 5,
+  preDropTotal: 1 + 3 + 18,
+  finalTotal: 1 + 3 + 18 + thirdNodes.length + fourthNodes.length,
 }
