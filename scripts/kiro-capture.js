@@ -44,13 +44,12 @@ async function main() {
 
   const startTime = Date.now()
   for (let i = 0; i < totalFrames; i++) {
-    const progress = totalFrames <= 1 ? 0 : i / (totalFrames - 1)
-    // set progress and force a render tick
-    await page.evaluate((p) => {
-      window.__kiroTimeline.progress(p)
-      // force layout recalc
+    const time = totalFrames <= 1 ? 0 : (i / (totalFrames - 1)) * duration
+    // seek by time, not progress (timeline may be longer than DURATION due to repeats)
+    await page.evaluate((t) => {
+      window.__kiroTimeline.time(t)
       document.body.offsetHeight
-    }, progress)
+    }, time)
     const framePath = resolve(FRAMES_DIR, `frame-${String(i).padStart(4, '0')}.png`)
     await page.screenshot({ path: framePath })
     if (i % 60 === 0) {
