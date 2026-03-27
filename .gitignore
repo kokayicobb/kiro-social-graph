@@ -2,3 +2,6 @@ node_modules/
 dist/
 output/kiro-frames/
 .DS_Store
+node-compile-cache/
+playwright_chromiumdev_profile*/
+package-lock.json
