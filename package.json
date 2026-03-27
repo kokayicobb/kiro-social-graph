@@ -1,0 +1,21 @@
+{
+  "name": "kiro-social-graph",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173",
+    "capture": "node scripts/kiro-capture.js",
+    "encode": "bash scripts/kiro-encode.sh",
+    "render": "npm run build && npm run capture && npm run encode"
+  },
+  "dependencies": {
+    "d3-force": "^3.0.0",
+    "gsap": "^3.12.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0",
+    "playwright": "^1.48.0"
+  }
+}
