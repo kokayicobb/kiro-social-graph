@@ -115,7 +115,8 @@ export function createTimeline(elements) {
   // ── PAUSE (15–17s) — pre-drop equation ──
   tl.to(youLabel, { opacity: 0.3, duration: 0.8, ease: 'power2.inOut' }, TIMING.pauseStart)
   tl.to(eqPause, { opacity: 0.8, duration: 0.8, ease: 'power2.out' }, TIMING.pauseStart + 0.3)
-  tl.to(eqPause, { opacity: 0, duration: 0.4, ease: 'power2.in' }, TIMING.pauseEnd - 0.5)
+  // pre-drop stays visible until final equation replaces it
+  tl.to(eqPause, { opacity: 0, duration: 0.5, ease: 'power2.in' }, TIMING.holdStart + 0.5)
 
   // ── THIRD RING (17–20.5s) ──
   const thirdEdges = edgesByPhase('third-bloom')

@@ -16,7 +16,7 @@ export const EQUATION_COLOR = '#e8e8e8'
 export const ACCENT_COLOR = '#e63946'
 
 // node radii — bumped up for phone readability
-export const RADII = { center: 36, first: 18, second: 9, third: 5, fourth: 3.5 }
+export const RADII = { center: 54, first: 18, second: 9, third: 5, fourth: 3.5 }
 
 // edge style — thicker
 export const EDGE_WIDTH = { first: 1.6, second: 1.2, third: 0.8, fourth: 0.5 }
@@ -28,9 +28,9 @@ export const GLOW_OPACITY = 0.55
 
 // typography — bigger
 export const FONT = 'Inter, system-ui, sans-serif'
-export const LABEL_SIZE = 18
-export const CALLOUT_SIZE = 16
-export const EQUATION_SIZE = 30
+export const LABEL_SIZE = 54
+export const CALLOUT_SIZE = 48
+export const EQUATION_SIZE = 60
 export const EQUATION_WEIGHT = '600'
 
 // timing (24 seconds)

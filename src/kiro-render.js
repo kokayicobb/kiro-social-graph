@@ -83,7 +83,7 @@ export function renderGraph({ nodes, links }) {
   // "you" label
   const youNode = nodeMap['you']
   const youLabel = el('text', {
-    x: youNode.x, y: youNode.y + RADII.center + 30,
+    x: youNode.x, y: youNode.y + RADII.center + 40,
     fill: LABEL_COLOR, 'font-family': FONT, 'font-size': LABEL_SIZE,
     'font-weight': '300', 'text-anchor': 'middle', 'letter-spacing': '3',
     opacity: 0, class: 'kiro-label kiro-label-you',
@@ -101,7 +101,7 @@ export function renderGraph({ nodes, links }) {
   for (const fd of firstDefs) {
     const n = nodeMap[fd.id]
     const line1 = el('text', {
-      x: n.x, y: n.y - RADII.first - 28,
+      x: n.x, y: n.y - RADII.first - 60,
       fill: EQUATION_COLOR, 'font-family': FONT, 'font-size': CALLOUT_SIZE,
       'font-weight': '400', 'text-anchor': 'middle', opacity: 0,
       class: `kiro-callout kiro-callout-${fd.id}-1`,
@@ -110,7 +110,7 @@ export function renderGraph({ nodes, links }) {
     labelGroup.appendChild(line1)
 
     const line2 = el('text', {
-      x: n.x, y: n.y - RADII.first - 10,
+      x: n.x, y: n.y - RADII.first - 18,
       fill: EQUATION_COLOR, 'font-family': FONT, 'font-size': CALLOUT_SIZE,
       'font-weight': '300', 'text-anchor': 'middle', opacity: 0,
       class: `kiro-callout kiro-callout-${fd.id}-2`,
