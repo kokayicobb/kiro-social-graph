@@ -5,7 +5,7 @@ export const HEIGHT = 1920
 
 // colors
 export const BG_COLOR = '#0a0a0a'
-export const CENTER_COLOR = '#e63946'
+export const CENTER_COLOR = '#cc2936'
 export const FIRST_COLOR = '#ffffff'
 export const SECOND_COLOR = '#c0c0c0'
 export const THIRD_COLOR = '#707070'
@@ -13,7 +13,7 @@ export const FOURTH_COLOR = '#555555'
 export const EDGE_COLOR = '#ffffff'
 export const LABEL_COLOR = '#ffffff'
 export const EQUATION_COLOR = '#e8e8e8'
-export const ACCENT_COLOR = '#e63946'
+export const ACCENT_COLOR = '#cc2936'
 
 // node radii — bumped up for phone readability
 export const RADII = { center: 54, first: 18, second: 9, third: 5, fourth: 3.5 }
@@ -29,7 +29,7 @@ export const GLOW_OPACITY = 0.55
 // typography — bigger
 export const FONT = 'Inter, system-ui, sans-serif'
 export const LABEL_SIZE = 54
-export const CALLOUT_SIZE = 48
+export const CALLOUT_SIZE = 24
 export const EQUATION_SIZE = 60
 export const EQUATION_WEIGHT = '600'
 
